@@ -1,0 +1,55 @@
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);  
+
+const int soundSensorPin = A0; 
+const int redLed = 7;          
+const int greenLed = 6;        
+int sensorValue = 0;          
+int threshold = 500;           
+
+void setup() {
+  
+  Serial.begin(9600);
+  
+  pinMode(redLed, OUTPUT);
+  pinMode(greenLed, OUTPUT);
+  
+  lcd.init();
+  lcd.backlight(); 
+  
+  lcd.setCursor(0,0);
+  lcd.print("Sistem Basliyor");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+  sensorValue = analogRead(soundSensorPin);
+  
+  Serial.print("Okunan Ses Degeri: ");
+  Serial.println(sensorValue);
+
+  lcd.clear();
+  lcd.setCursor(0, 0); 
+
+  if (sensorValue > threshold) {
+    lcd.print("LOUD"); 
+    
+    digitalWrite(redLed, HIGH);
+    digitalWrite(greenLed, HIGH);
+    delay(500); 
+    digitalWrite(redLed, LOW);
+    digitalWrite(greenLed, LOW);
+    delay(500); 
+    
+  } else {
+    lcd.print("QUIET"); 
+    
+    digitalWrite(redLed, LOW);
+    digitalWrite(greenLed, LOW);
+  }
+
+  delay(1000); 
+}
